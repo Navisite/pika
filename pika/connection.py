@@ -66,7 +66,7 @@ class ConnectionParameters(object):
                  ssl_options=None,
                  connection_attempts=1,
                  retry_delay=2,
-                 socket_timeout=2):
+                 socket_timeout=None):
 
         # Validate the host type
         if not isinstance(host, str):
@@ -145,7 +145,7 @@ class ConnectionParameters(object):
             raise TypeError("retry_delay must be an int")
 
         # Validate the socket timeout delay
-        if not isinstance(socket_timeout, int):
+        if socket_timeout and not isinstance(socket_timeout, int):
             raise TypeError("socket_timeout must be an int")
 
         # Assign our values
