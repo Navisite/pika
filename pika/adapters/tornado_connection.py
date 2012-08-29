@@ -20,6 +20,8 @@ if IOLoop:
     WRITE = ioloop.IOLoop.WRITE
 
 import time
+import socket
+
 
 class TornadoConnection(BaseConnection):
 
@@ -74,7 +76,8 @@ class TornadoConnection(BaseConnection):
         """
         self.stop_poller()
 
-        BaseConnection._handle_disconnect(self)
+        # Close up our Connection state
+        self._on_connection_closed(None, True)
 
     def _adapter_disconnect(self):
         """
@@ -82,7 +85,12 @@ class TornadoConnection(BaseConnection):
         """
         self.stop_poller()
 
-        BaseConnection._adapter_disconnect(self)
+        # Close our socket
+        self.socket.shutdown(socket.SHUT_RDWR)
+        self.socket.close()
+
+        # Check our state on disconnect
+        self._check_state_on_disconnect()
 
     def start_poller(self):
         # Start periodic _manage_event_state
